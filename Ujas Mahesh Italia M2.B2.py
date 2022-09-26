@@ -105,6 +105,50 @@ def calc_family(lines, index, new_family):
         details = lines[index].split(" ", 2)
     fams.append(new_family)
 
+def print_individuals():
+    headers = ["Id", "Name", "Sex", "Birthday", "Age",
+               "Alive", "Death", "Child Id", "Spouse Id"]
+    table = []
+    for ind in person:
+        table.append([ind.id, ind.name, ind.sex, format_date(ind.birth), ind.age, True if ind.death is None else False,
+                      format_date(ind.death) if ind.death is not None else "NA", ind.child_id, ind.spouse_id])
+    print(tabulate(table, headers, tablefmt="fancy_grid"))
+
+
+def print_families():
+    headers = ["Id", "Married", "Divorced", "Husband Id",
+               "Husband Name", "Wife Id", "Wife Name", "Children Ids"]
+    table = []
+    for fam in fams:
+        table.append([fam.f_id, format_date(fam.marriage) if fam.marriage is not None else "NA",
+                      format_date(
+                          fam.divorce) if fam.divorce is not None else "NA", fam.husband.replace('@', ''),
+                      get_individual(fam.husband).name, fam.wife.replace(
+                          '@', ''), get_individual(fam.wife).name,
+                      ", ".join(fam.children).replace('@', '')])
+    print(tabulate(table, headers, tablefmt="fancy_grid"))
+
+
+def format_date(input_date):
+    return datetime.strftime(input_date, '%d %b %Y')
+
+
+def get_husband_id(ind):
+    return fams[int(ind.child_id[1:]) - 1].husband
+
+
+def get_wife_id(ind):
+    return fams[int(ind.child_id[1:]) - 1].wife
+
+
+def get_individual(ind_id):
+    return person[int(ind_id[2]) - 1]
+
+
+def get_family(fam_id):
+    return fams[int(fam_id[1:]) - 1]
+
+
 i = 0
 while len(copy) > i:
     line = copy[i].split(" ")
