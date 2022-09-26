@@ -84,6 +84,27 @@ def calc_individual(copy, index, new_individual):
     new_individual.age =  int((new_individual.death - new_individual.birth).days / 365) if new_individual.death else int((date.today() - new_individual.birth).days / 365)
     person.append(new_individual)
 
+def calc_family(lines, index, new_family):
+    details = lines[index].split(" ", 2)
+    
+    while len(lines) > index and details[0] != "0":
+        if details[0] == "1":
+            if details[1] == "HUSB":
+                new_family.husband = details[2].rstrip()
+            elif details[1] == "WIFE":
+                new_family.wife = details[2].rstrip()
+            elif details[1] == "CHIL":
+                new_family.children.append(details[2].rstrip())
+            elif details[1].rstrip() == "MARR": 
+                flag = 0
+                if lines[index+2].split()[1].rstrip() == "EVEN":
+                    flag = 1
+                    calc_date(new_family, lines[index + 1].split(" ", 2), flag)
+                calc_date(new_family, lines[index + 1].split(" ", 2), flag)
+        index += 1
+        details = lines[index].split(" ", 2)
+    fams.append(new_family)
+
 i = 0
 while len(copy) > i:
     line = copy[i].split(" ")
