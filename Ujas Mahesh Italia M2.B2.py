@@ -148,18 +148,6 @@ def get_individual(ind_id):
 def get_family(fam_id):
     return fams[int(fam_id[1:]) - 1]
 
-# US28: Order Siblings By Age
-# Sorted all the children in the fams array according to their D.O.B in descending order
-def order_siblings_by_age(arr):  
-    for fam in fams:
-        if fam.children:
-            fam.children.sort(key=lambda child: get_individual(child).birth)
-
-        arr.append(
-            ["US28", "Order Siblings By Age", "", True, "\n{}\n".format(fam.children).replace("@","")])
-    return tabulate(arr)
-
-
 # US03: Birth Before Death
 # Comparing birth dates and death dates to check the validity
 def birth_before_death(table):  
@@ -180,11 +168,42 @@ def birth_before_death(table):
         ["US03", "Birth Before Death", "\n".join(arr1), born_before_death, result])
     return table
 
+# US28: Order Siblings By Age
+# Sorted all the children in the fams array according to their D.O.B in descending order
+def order_siblings_by_age(arr):  
+    for fam in fams:
+        if fam.children:
+            fam.children.sort(key=lambda child: get_individual(child).birth)
+
+        arr.append(
+            ["US28", "Order Siblings By Age", "", True, "\n{}\n".format(fam.children).replace("@","")])
+    return tabulate(arr)
+
+# US29: List Deceased
+# Finding all the deaceased people and appending it to a list
+def list_deceased(arr2):  
+    detail = "\n".join([per.name for per in person if per.death is not None])
+    arr2.append(["US29", "List Deceased", "", True, detail])
+    return arr2
+
+# US30: List Living Married
+# Finding all the living people who are married
+def list_living_married(arr3):  
+    list_of_living_married = []
+    for per in person:
+        if (per.spouse_id is not None and per.spouse_id != "NA") and per.death is None:
+            list_of_living_married.append(per.name)
+    arr3.append(["US30", "List Living Married", "", True, "\n".join(list_of_living_married)])
+
+
+
 def user_Stories():
     headers = ["User Story", "Description", "Notes", "Pass", "Result"]
     table = []
-    order_siblings_by_age(table)
     birth_before_death(table)
+    order_siblings_by_age(table)
+    list_deceased(table)
+    list_living_married(table)
     print(tabulate(table, headers, tablefmt="fancy_grid"))
 
 i = 0
