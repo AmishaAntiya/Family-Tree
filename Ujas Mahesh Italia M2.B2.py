@@ -150,13 +150,17 @@ def get_family(fam_id):
 
 
 i = 0
+count_Indi=0
+count_fams=0
 while len(copy) > i:
     line = copy[i].split(" ")
     if line[1] == "INDI" and len(line) != 2:
-        if line[1] == "INDI":
+        if line[1] == "INDI" and count_Indi < 5000:
             calc_individual(copy, i+1, Person(line[2].rstrip()))
-    elif line[1].rstrip() == "FAM":
+            count_Indi+=1
+    elif line[1].rstrip() == "FAM" and count_fams < 1000:
         calc_family(copy, i+1, Fam(line[2].rstrip()))
+        count_fams+=1
     i += 1
 
 person.sort(key=lambda y: int(y.id[1:]))
