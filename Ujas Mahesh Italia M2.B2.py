@@ -183,7 +183,10 @@ def order_siblings_by_age(arr):
 # Finding all the deaceased people and appending it to a list
 def list_deceased(arr2):  
     detail = "\n".join([per.name for per in person if per.death is not None])
-    arr2.append(["US29", "List Deceased", "", True, detail])
+    if detail:
+        arr2.append(["US29", "List Deceased", "", True, detail])
+    else:
+        arr2.append(["US29", "List Deceased", "", True, "No death"])
     return arr2
 
 # US30: List Living Married
@@ -193,7 +196,11 @@ def list_living_married(arr3):
     for per in person:
         if (per.spouse_id is not None and per.spouse_id != "NA") and per.death is None:
             list_of_living_married.append(per.name)
-    arr3.append(["US30", "List Living Married", "", True, "\n".join(list_of_living_married)])
+    if list_of_living_married:
+        arr3.append(["US30", "List Living Married", "", True, "\n".join(list_of_living_married)])
+    else:
+        arr3.append(["US30", "List Living Married", "", True, "No living married person"])
+    return arr3
 
 # US35: List Recent Births
 # All the recent births found in last year
