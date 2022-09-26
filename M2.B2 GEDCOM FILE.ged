@@ -22,7 +22,7 @@ o NOTE https://github.com/ujasitalia/CS-555-WS-1
 1 BIRT
 2 DATE 14 DEC 1924
 1 DEAT Y
-2 DATE 2 JUN 1998
+2 DATE 2 JUN 1958
 1 FAMS @F1@
 0 @I2@ INDI
 1 NAME Krishna /Malhotra/
@@ -162,7 +162,7 @@ o NOTE https://github.com/ujasitalia/CS-555-WS-1
 2 _MARNM Sahani
 1 SEX F
 1 BIRT
-2 DATE 15 SEP 1980
+2 DATE 15 SEP 2022
 1 FAMC @F5@
 0 @F1@ FAM
 1 HUSB @I1@

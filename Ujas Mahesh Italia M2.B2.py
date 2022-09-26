@@ -195,15 +195,44 @@ def list_living_married(arr3):
             list_of_living_married.append(per.name)
     arr3.append(["US30", "List Living Married", "", True, "\n".join(list_of_living_married)])
 
+# US35: List Recent Births
+# All the recent births found in last year
+def list_recent_births(arr4):  
+    list_of_recent_births = []
+    for per in person:
+        if per.birth is not None and datetime.now().date() - timedelta(days=365) <= per.birth <= datetime.now().date():
+            list_of_recent_births.append(per.name)
+    if list_of_recent_births:
+        arr4.append(["US35", "List Recent Births", "", True, "\n".join(list_of_recent_births)])
+    else:
+        arr4.append(["US36", "List Recent Births", "", True, "No recent Birth"]) 
+    return arr4
+
+# US36: List Recent Deaths
+# All the recent death found in last year
+def list_recent_deaths(arr5):  
+    list_of_recent_deaths = []
+
+    for per in person:
+        if per.death is not None and datetime.now().date() - timedelta(days=365) <= per.death <= datetime.now().date():
+            list_of_recent_deaths.append(per.name)
+    if list_of_recent_deaths:
+        arr5.append(["US36", "List Recent Deaths", "", True, "\n".join(list_of_recent_deaths)]) 
+    else:
+        arr5.append(["US36", "List Recent Deaths", "", True, "No recent death"]) 
+    return arr5
+
 
 
 def user_Stories():
-    headers = ["User Story", "Description", "Notes", "Pass", "Result"]
+    headers = ["User Story", "Description", "Error Message", "Pass", "Result"]
     table = []
     birth_before_death(table)
     order_siblings_by_age(table)
     list_deceased(table)
     list_living_married(table)
+    list_recent_births(table)
+    list_recent_deaths(table)
     print(tabulate(table, headers, tablefmt="fancy_grid"))
 
 i = 0
