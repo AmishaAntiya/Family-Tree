@@ -148,6 +148,44 @@ def get_individual(ind_id):
 def get_family(fam_id):
     return fams[int(fam_id[1:]) - 1]
 
+# US28: Order Siblings By Age
+# Sorted all the children in the fams array according to their D.O.B in descending order
+def order_siblings_by_age(arr):  
+    for fam in fams:
+        if fam.children:
+            fam.children.sort(key=lambda child: get_individual(child).birth)
+
+        arr.append(
+            ["US28", "Order Siblings By Age", "", True, "\n{}\n".format(fam.children).replace("@","")])
+    return tabulate(arr)
+
+
+# US03: Birth Before Death
+# Comparing birth dates and death dates to check the validity
+def birth_before_death(table):  
+    born_before_death = True
+    arr1 = []
+    for per in person:
+        if per.death is not None and per.birth > per.death:
+            arr1.append("{} has a birthdate after their deathdate.".format(per.name))
+            arr1.append("Birthdate: {} and Deathdate: {}".format(format_date(per.birth), format_date(per.death)))
+            born_before_death = False
+
+    if born_before_death:
+        result = "Birth and death dates are valid."
+    else:
+        result = "One or more people has a death date before their birth."
+
+    table.append(
+        ["US03", "Birth Before Death", "\n".join(arr1), born_before_death, result])
+    return table
+
+def user_Stories():
+    headers = ["User Story", "Description", "Notes", "Pass", "Result"]
+    table = []
+    order_siblings_by_age(table)
+    birth_before_death(table)
+    print(tabulate(table, headers, tablefmt="fancy_grid"))
 
 i = 0
 count_Indi=0
@@ -168,3 +206,4 @@ fams.sort(key=lambda z: int(z.f_id[1:]))
 
 print_individuals()
 print_families()
+user_Stories()
