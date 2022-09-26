@@ -168,6 +168,22 @@ def birth_before_death(table):
         ["US03", "Birth Before Death", "\n".join(arr1), born_before_death, result])
     return table
 
+# US15: Fewer Than 15 Siblings
+#Checking whether the family has children less than 15 or more
+def fewer_than_15_siblings(arr7):  
+    more_than_15_kids = False
+    arr0 = []
+    for fam in fams:
+        if fam.children and len(fam.children) >= 15:
+            arr0.append("Family {} has more than 15 children.".format(fam.f_id))
+            more_than_15_kids = True
+
+    if more_than_15_kids:
+        arr7.append(["US15", "Fewer Than 15 Siblings", "\n".join(arr0), not more_than_15_kids, "Some families have more than 15 children"])
+    else:
+        arr7.append(["US15", "Fewer Than 15 Siblings", "\n".join(arr0), not more_than_15_kids, "All families have less than 15 children"])
+    return arr7
+    
 # US28: Order Siblings By Age
 # Sorted all the children in the fams array according to their D.O.B in descending order
 def order_siblings_by_age(arr):  
@@ -202,6 +218,19 @@ def list_living_married(arr3):
         arr3.append(["US30", "List Living Married", "", True, "No living married person"])
     return arr3
 
+# US31: List Living Single
+#listing all the people who are single
+def list_living_single(arr6):  
+    list_of_living_single = []
+    for per in person:
+        if (per.spouse_id is None or per.spouse_id == "NA") and per.death is None:
+            list_of_living_single.append(per.name)
+    if list_of_living_single:
+        arr6.append(["US31", "List Living Single", "", True, "\n".join(list_of_living_single)])
+    else:
+        arr6.append(["US31", "List Living Single", "", True, "All living people are married"])
+    return arr6
+
 # US35: List Recent Births
 # All the recent births found in last year
 def list_recent_births(arr4):  
@@ -235,9 +264,11 @@ def user_Stories():
     headers = ["User Story", "Description", "Error Message", "Pass", "Result"]
     table = []
     birth_before_death(table)
+    fewer_than_15_siblings(table)
     order_siblings_by_age(table)
     list_deceased(table)
     list_living_married(table)
+    list_living_single(table)
     list_recent_births(table)
     list_recent_deaths(table)
     print(tabulate(table, headers, tablefmt="fancy_grid"))
