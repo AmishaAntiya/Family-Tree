@@ -64,6 +64,25 @@ def calc_date(obj, line, dType):
                 obj.divorce = datetime.strptime(
                     line[2].rstrip(), '%d %b %Y').date()
 
+def calc_individual(copy, index, new_individual):
+    details = copy[index].split(" ", 2)
+    while len(copy) > index  and details[0] != "0":
+        if details[0] == "1":
+            if details[1] == "NAME":
+                new_individual.name = details[2].strip().replace("/", "")
+            elif details[1] == "SEX":
+                new_individual.sex = details[2].rstrip()
+            elif details[1] == "FAMS":
+                new_individual.spouse_id = details[2].rstrip().replace('@', '')
+            elif details[1] == "FAMC":
+                new_individual.child_id = details[2].rstrip().replace('@', '')
+            elif details[1].rstrip() == "BIRT" or details[1].rstrip() == "DEAT":
+                calc_date(new_individual, copy[index + 1].split(" ", 2), details[1].rstrip())
+        
+        index = index + 1
+        details = copy[index].split(" ", 2)
+    new_individual.age =  int((new_individual.death - new_individual.birth).days / 365) if new_individual.death else int((date.today() - new_individual.birth).days / 365)
+    person.append(new_individual)
 
 i = 0
 while len(copy) > i:
