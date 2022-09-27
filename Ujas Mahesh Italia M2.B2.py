@@ -113,6 +113,7 @@ def print_individuals():
         table.append([ind.id, ind.name, ind.sex, format_date(ind.birth), ind.age, True if ind.death is None else False,
                       format_date(ind.death) if ind.death is not None else "NA", ind.child_id, ind.spouse_id])
     print(tabulate(table, headers, tablefmt="fancy_grid"))
+    return (tabulate(table, headers))
 
 
 def print_families():
@@ -127,7 +128,7 @@ def print_families():
                           '@', ''), get_individual(fam.wife).name,
                       ", ".join(fam.children).replace('@', '')])
     print(tabulate(table, headers, tablefmt="fancy_grid"))
-
+    return (tabulate(table, headers))
 
 def format_date(input_date):
     return datetime.strftime(input_date, '%d %b %Y')
@@ -272,6 +273,7 @@ def user_Stories():
     list_recent_births(table)
     list_recent_deaths(table)
     print(tabulate(table, headers, tablefmt="fancy_grid"))
+    return (tabulate(table, headers))
 
 i = 0
 count_Indi=0
@@ -293,3 +295,11 @@ fams.sort(key=lambda z: int(z.f_id[1:]))
 print_individuals()
 print_families()
 user_Stories()
+
+with open('output.txt', 'w') as f:
+    f.write("Output for individual\n")
+    f.write(print_individuals()+"\n\n")
+    f.write("Output for families\n")
+    f.write(print_families()+"\n\n")
+    f.write("Output for user stories\n")
+    f.write(user_Stories())
