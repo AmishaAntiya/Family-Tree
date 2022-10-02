@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from tabulate import tabulate
 from datetime import date
+import unittest
 
 with open('./M2.B2 GEDCOM FILE.ged', 'r+') as f:
     lines = f.read().split('\n')
@@ -187,13 +188,31 @@ def fewer_than_15_siblings(arr7):
     
 # US28: Order Siblings By Age
 # Sorted all the children in the fams array according to their D.O.B in descending order
-def order_siblings_by_age(arr):  
+
+
+def order_siblings_by_age(arr):
+    res = []
     for fam in fams:
         if fam.children:
             fam.children.sort(key=lambda child: get_individual(child).birth)
+        res.append(fam.children)
 
-        arr.append(
-            ["US28", "Order Siblings By Age", "", True, "\n{}\n".format(fam.children).replace("@","")])
+    fin = []
+    for i in res:
+        fin += i
+
+    final = []
+    for i in res:
+        temp = []
+        for k in i:
+            for j in person:
+                if j.id == k.replace('@', ''):
+                    temp.append(j.name)
+        final.append(temp)
+
+    final = '\n'.join([str(i) for i in final])
+    arr.append(['US28', 'Order Siblings by age',
+               '', True, '\n{}\n'.format(final)])
     return tabulate(arr)
 
 # US29: List Deceased
