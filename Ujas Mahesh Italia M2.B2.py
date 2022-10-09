@@ -279,6 +279,64 @@ def list_recent_deaths(arr5):
     return arr5
 
 
+#US01: Dates before today
+def dates_before_today(arr):  
+    valid_dates = True
+    mt = []
+    for indi in person:
+        if indi.birth is not None and datetime.now().date() < indi.birth:
+            mt.append("{} should born before current date, {}.".format(indi.name, format_date(indi.birth)))
+            valid_dates = False
+        if indi.death is not None and datetime.now().date() < indi.death:
+            mt.append("{} died before current date, {}.".format(indi.name, format_date(indi.death)))
+            valid_dates = False
+
+    for fam in fams:
+        wife_name = get_individual(fam.wife).name
+        hubby_name = get_individual(fam.husband).name
+
+        if fam.marriage is not None and datetime.now().date() < fam.marriage:
+            mt.append(
+                "{} {} should be married before current date, {}.".format(hubby_name, wife_name, format_date(fam.marriage)))
+            valid_dates = False
+
+        if fam.divorce is not None and datetime.now().date() < fam.divorce:
+            mt.append(
+                "{} {} should be divorced before current date, {}.".format(hubby_name, wife_name, format_date(fam.divorce)))
+            valid_dates = False
+
+    if valid_dates:
+        result = "All dates are valid."
+    else:
+        result = "Found invalid dates."
+
+    arr.append(
+        ["US01", "Dates Before Today", "\n".join(mt), valid_dates, result])
+    return arr
+
+# US05: Marriage Before Death
+def marriage_before_death(arr): 
+    marry_before_dead = True
+    mt = []
+    for fam in fams:
+        for ind in person:
+            if fam.marriage is not None:
+                if ind.name == get_individual(fam.wife).name or ind.name == get_individual(fam.husband).name:
+                    if ind.death is not None:
+                        if  fam.marriage > ind.death:
+                            mt.append("{} has an incorrect marriage and/or death date.".format(ind.name))
+                            mt.append("Marriage is: {} and Death is: {}".format(format_date(fam.marriage),
+                                                                                   format_date(ind.death)))
+                            marry_before_dead = False
+
+    if marry_before_dead:
+        result = "All marriages dates are valid."
+    else:
+        result = "One or more marriages are not before death dates"
+
+    arr.append(
+        ["US05", "Marriage Before Death", "\n".join(mt), marry_before_dead, result])
+    return arr
 
 def user_Stories():
     headers = ["User Story", "Description", "Error Message", "Pass", "Result"]
@@ -291,6 +349,8 @@ def user_Stories():
     list_living_single(table)
     list_recent_births(table)
     list_recent_deaths(table)
+    dates_before_today(table)
+    marriage_before_death(table)
     print(tabulate(table, headers, tablefmt="fancy_grid"))
     return (tabulate(table, headers))
 

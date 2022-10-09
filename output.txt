@@ -53,3 +53,5 @@ US31          List Living Single                       True    Karishma Kapoor
                                                                Ridhima Kapoor
 US35          List Recent Births                       True    Ridhima Kapoor
 US36          List Recent Deaths                       True    No recent death
+US01          Dates Before Today                       True    All dates are valid.
+US05          Marriage Before Death                    True    All marriages dates are valid.
