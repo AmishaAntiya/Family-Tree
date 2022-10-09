@@ -338,6 +338,18 @@ def marriage_before_death(arr):
         ["US05", "Marriage Before Death", "\n".join(mt), marry_before_dead, result])
     return arr
 
+# US38: Upcoming Birthdays
+#To get the list of people whose birthday is nearby
+def upcoming_birthdays(arr9):  
+    birthday_list = []
+    for indi in person:
+        if indi.birth is not None:
+            birthdate = datetime(datetime.now().year, indi.birth.month, indi.birth.day).date()
+            days_to_go = birthdate - datetime.today().date()
+            if birthdate > datetime.today().date() and days_to_go < timedelta(days=30):
+                birthday_list.append(indi.name)
+    arr9.append(["US38", "Upcoming Birthdays", "", True, "\n".join(birthday_list)])
+
 def user_Stories():
     headers = ["User Story", "Description", "Error Message", "Pass", "Result"]
     table = []
@@ -351,6 +363,7 @@ def user_Stories():
     list_recent_deaths(table)
     dates_before_today(table)
     marriage_before_death(table)
+    upcoming_birthdays(table)
     print(tabulate(table, headers, tablefmt="fancy_grid"))
     return (tabulate(table, headers))
 
