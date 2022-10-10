@@ -156,6 +156,23 @@ def get_individual(ind_id):
 def get_family(fam_id):
     return fams[int(fam_id[1:]) - 1]
 
+
+def get_family_by_id(i_id):
+    return [fam.f_id for fam in fams if i_id in [fam.husband, fam.wife]]
+
+
+def get_descendants(i_id):
+    descendants = []
+
+    for family_id in get_family_by_id(i_id):
+        if get_family(family_id).children:
+            descendants.extend(get_family(family_id).children)
+
+            for child_id in get_family(family_id).children:
+                descendants.extend(get_descendants(child_id))
+
+    return descendants
+
 # US03: Birth Before Death
 # Comparing birth dates and death dates to check the validity
 
@@ -441,6 +458,33 @@ def marriage_before_divorce(table):  # US04: Marriage Before Divorce
     return table
 
 
+def no_marriage_to_descendants(table):  # US17: No Marriage to Descendants
+    descendant_marriage = False
+    data2 = []
+
+    for per in person:
+        descendants = get_descendants(per.id)
+        if descendants is not None:
+            for fam_id in get_family_by_id(per.id):
+                if any(s_id in descendants for s_id in [get_family(fam_id).husband, get_family(fam_id).wife]):
+                    if per.i_id == get_family(fam_id).husband:
+                        data2.append(
+                            f"{per.name} is married to descendant, {get_individual(get_family(fam_id).wife).name}.")
+                    else:
+                        data2.append(
+                            f"{per.name} is married to descendant, {get_individual(get_family(fam_id).husband).name}.")
+                    descendant_marriage = True
+
+    if descendant_marriage:
+        table.append(["US17", "No Marriage to Descendants", "\n".join(
+            data2), not descendant_marriage, "Some ancestors are married to descendants."])
+
+    else:
+        table.append(["US17", "No Marriage to Descendants", "\n".join(
+            data2), not descendant_marriage, "No ancestors are married to descendants."])
+    return table
+
+
 def user_Stories():
     headers = ["User Story", "Description", "Error Message", "Pass", "Result"]
     table = []
@@ -457,6 +501,7 @@ def user_Stories():
     upcoming_birthdays(table)
     birth_before_marriage(table)
     marriage_before_divorce(table)
+    no_marriage_to_descendants(table)
     print(tabulate(table, headers, tablefmt="fancy_grid"))
     return (tabulate(table, headers))
 
