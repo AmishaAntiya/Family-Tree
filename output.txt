@@ -27,32 +27,34 @@ F4    09 Jul 1969  NA           I8            Rajan Nanda            I4         
 F5    22 Jan 1980  NA           I5            Rishi Kapoor           I9         Neetu Singh        I14, I15
 
 Output for user stories
-User Story    Description             Error Message    Pass    Result
-------------  ----------------------  ---------------  ------  --------------------------------------------------------
-US03          Birth Before Death                       True    Birth and death dates are valid.
-US15          Fewer Than 15 Siblings                   True    All families have less than 15 children
-US28          Order Siblings by age                    True    ['Randhir Kapoor Kapoor', 'Ritu Kapoor', 'Rishi Kapoor']
-                                                               ['Kareena Khan']
-                                                               ['Karishma Kapoor']
-                                                               ['Nikhil Nanda', 'Natasha Nanda']
-                                                               ['Ranbir Kapoor', 'Ridhima Kapoor']
-US29          List Deceased                            True    Raj Kapoor
-                                                               Krishna Malhotra
-                                                               Ritu Kapoor
-                                                               Rishi Kapoor
-                                                               Babita Shivdasani
-                                                               Rajan Nanda
-US30          List Living Married                      True    Randhir Kapoor Kapoor
-                                                               Seema Khan
-                                                               Neetu Singh
-US31          List Living Single                       True    Karishma Kapoor
-                                                               Kareena Khan
-                                                               Nikhil Nanda
-                                                               Natasha Nanda
-                                                               Ranbir Kapoor
-                                                               Ridhima Kapoor
-US35          List Recent Births                       True    Ridhima Kapoor
-US36          List Recent Deaths                       True    No recent death
-US01          Dates Before Today                       True    All dates are valid.
-US05          Marriage Before Death                    True    All marriages dates are valid.
-US38          Upcoming Birthdays                       True    Ritu Kapoor
+User Story    Description             Error Message                                                Pass    Result
+------------  ----------------------  -----------------------------------------------------------  ------  --------------------------------------------------------
+US03          Birth Before Death                                                                   True    Birth and death dates are valid.
+US15          Fewer Than 15 Siblings                                                               True    All families have less than 15 children
+US28          Order Siblings by age                                                                True    ['Randhir Kapoor Kapoor', 'Ritu Kapoor', 'Rishi Kapoor']
+                                                                                                           ['Kareena Khan']
+                                                                                                           ['Karishma Kapoor']
+                                                                                                           ['Nikhil Nanda', 'Natasha Nanda']
+                                                                                                           ['Ranbir Kapoor', 'Ridhima Kapoor']
+US29          List Deceased                                                                        True    Raj Kapoor
+                                                                                                           Krishna Malhotra
+                                                                                                           Ritu Kapoor
+                                                                                                           Rishi Kapoor
+                                                                                                           Babita Shivdasani
+                                                                                                           Rajan Nanda
+US30          List Living Married                                                                  True    Randhir Kapoor Kapoor
+                                                                                                           Seema Khan
+                                                                                                           Neetu Singh
+US31          List Living Single                                                                   True    Karishma Kapoor
+                                                                                                           Kareena Khan
+                                                                                                           Nikhil Nanda
+                                                                                                           Natasha Nanda
+                                                                                                           Ranbir Kapoor
+                                                                                                           Ridhima Kapoor
+US35          List Recent Births                                                                   True    Ridhima Kapoor
+US36          List Recent Deaths                                                                   True    No recent death
+US01          Dates Before Today                                                                   True    All dates are valid.
+US05          Marriage Before Death                                                                True    All marriages dates are valid.
+US38          Upcoming Birthdays                                                                   True    Ritu Kapoor
+US02          Birth Before Marriage   Rajan Nanda has either an incorrect birth or marriage date.  False   Atleast one birthdate or marriage date is incorrect.
+                                      Birthdate is: 18 May 1974 and Marriage date is: 09 Jul 1969

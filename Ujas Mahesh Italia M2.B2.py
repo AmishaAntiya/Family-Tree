@@ -350,6 +350,30 @@ def upcoming_birthdays(arr9):
                 birthday_list.append(indi.name)
     arr9.append(["US38", "Upcoming Birthdays", "", True, "\n".join(birthday_list)])
 
+
+def birth_before_marriage(table):  # US02: Birth Before Marriage
+    valid_marriage = True
+    data = []
+
+    for fam in fams:
+        hubby_name = get_individual(fam.husband).name
+        wife_name = get_individual(fam.wife).name
+        
+
+        for per in person:
+            if fam.marriage is not None:
+                if fam.marriage < per.birth and (wife_name == per.name or hubby_name == per.name):
+                    data.append(f"{per.name} has either an incorrect birth or marriage date.")
+                    data.append(f"Birthdate is: {format_date(per.birth)} and Marriage date is: {format_date(fam.marriage)}")
+                    valid_marriage = False
+
+    if valid_marriage:
+        table.append(["US02", "Birth Before Marriage", "\n".join(data), valid_marriage, "All birth dates and marriage dates were correct"])
+    else:
+        table.append(["US02", "Birth Before Marriage", "\n".join(data), valid_marriage, "Atleast one birthdate or marriage date is incorrect."])
+
+
+
 def user_Stories():
     headers = ["User Story", "Description", "Error Message", "Pass", "Result"]
     table = []
@@ -364,6 +388,7 @@ def user_Stories():
     dates_before_today(table)
     marriage_before_death(table)
     upcoming_birthdays(table)
+    birth_before_marriage(table)
     print(tabulate(table, headers, tablefmt="fancy_grid"))
     return (tabulate(table, headers))
 
