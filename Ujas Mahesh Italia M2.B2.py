@@ -518,9 +518,9 @@ def siblings_should_not_marry(table):
                         data.append(f"{get_individual(fam.children[i]).name} and {get_individual(fam.children[j]).name} are married siblings.")
 
     if marriage_sibling:
-        table.append(["US18", "Siblings Should Not Marry", "\n".join(data), not marriage_sibling,"Some siblings are married."])
+        table.append(["US18", "Siblings Should Not Marry Each other", "\n".join(data), not marriage_sibling,"Some siblings are married."])
     else:
-        table.append(["US18", "Siblings Should Not Marry", "\n".join(data), not marriage_sibling,"All siblings are not married."])
+        table.append(["US18", "Siblings Should Not Marry Each other", "\n".join(data), not marriage_sibling,"No siblings are married to one another."])
    
 def user_Stories():
     headers = ["User Story", "Description", "Error Message", "Pass", "Result"]
