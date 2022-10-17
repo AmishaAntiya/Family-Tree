@@ -477,8 +477,8 @@ def marriage_before_divorce(table):  # US04: Marriage Before Divorce
 
     return table
 
-
-def no_marriage_to_descendants(table):  # US17: No Marriage to Descendants
+# US17: No Marriage to Descendants
+def no_marriage_to_descendants(table):
     descendant_marriage = False
     data2 = []
 
@@ -505,6 +505,23 @@ def no_marriage_to_descendants(table):  # US17: No Marriage to Descendants
     return table
 
 
+# US18: Siblings Should Not Marry
+def siblings_should_not_marry(table): 
+    marriage_sibling = False
+    data = []
+    for fam in fams:
+        if fam.children and len(fam.children) > 1:
+            for i in range(len(fam.children)):
+                for j in range(i + 1, len(fam.children)):
+                    if any(fam.children[i] in [f.husband, f.wife] and fam.children[j] in [f.husband, f.wife] for f in fams):
+                        marriage_sibling = True
+                        data.append(f"{get_individual(fam.children[i]).name} and {get_individual(fam.children[j]).name} are married siblings.")
+
+    if marriage_sibling:
+        table.append(["US18", "Siblings Should Not Marry", "\n".join(data), not marriage_sibling,"Some siblings are married."])
+    else:
+        table.append(["US18", "Siblings Should Not Marry", "\n".join(data), not marriage_sibling,"All siblings are not married."])
+   
 def user_Stories():
     headers = ["User Story", "Description", "Error Message", "Pass", "Result"]
     table = []
@@ -523,6 +540,7 @@ def user_Stories():
     birth_before_marriage(table)
     marriage_before_divorce(table)
     no_marriage_to_descendants(table)
+    siblings_should_not_marry(table)
     print(tabulate(table, headers, tablefmt="fancy_grid"))
     return (tabulate(table, headers))
 
@@ -548,6 +566,13 @@ print_individuals()
 print_families()
 user_Stories()
 
+with open('output.txt', 'w') as f:
+    f.write("Output for individual\n")
+    f.write(print_individuals()+"\n\n")
+    f.write("Output for families\n")
+    f.write(print_families()+"\n\n")
+    f.write("Output for user stories\n")
+    f.write(user_Stories())
 
 class TestStringMethods(unittest.TestCase):
 
@@ -558,10 +583,15 @@ class TestStringMethods(unittest.TestCase):
     def test_checkUS01(self):
         self.assertEqual(dates_before_today(
             []), [['US01', 'Dates Before Today', '', True, 'All dates are valid.']])
+    
+    def test_checkUS02(self):
+        self.assertNotEqual(birth_before_marriage([]), [['US02','Birth Before Marriage','Rajan Nanda has either an incorrect birth or marriage date.\n Birthdate is: 18 May 1974 and Marriage date is: 09 Jul 1969',True,'Atleast one birthdate or marriage date is incorrect.']])
 
     def test_checkUS05(self):
         self.assertEqual(marriage_before_death([]), [
                          ['US05', 'Marriage Before Death', '', True, 'All marriages dates are valid.']])
+    def test_checkUS18(self):
+        self.assertIsNotNone(marriage_before_death([]))
 
     def test_checkUS28(self):
         self.assertIsNotNone(order_siblings_by_age([]))
@@ -579,6 +609,12 @@ class TestStringMethods(unittest.TestCase):
     def test_checkUS30(self):
         self.assertIsNotNone(list_living_married([]))
 
+    def test_checkUS35(self):
+        self.assertEqual(list_recent_births([]), [['US35', 'List Recent Births', '', True, 'Ridhima Kapoor']])
+
+    def test_checkUS36(self):
+        self.assertNotIn("Rishi Kapoor",list_recent_deaths([])[0])
+
     def test_checkUS38(self):
         self.assertIsNotNone(upcoming_birthdays([]))
     
@@ -588,10 +624,4 @@ class TestStringMethods(unittest.TestCase):
 if __name__ == '__main__':
     unittest.main()
 
-with open('output.txt', 'w') as f:
-    f.write("Output for individual\n")
-    f.write(print_individuals()+"\n\n")
-    f.write("Output for families\n")
-    f.write(print_families()+"\n\n")
-    f.write("Output for user stories\n")
-    f.write(user_Stories())
+
