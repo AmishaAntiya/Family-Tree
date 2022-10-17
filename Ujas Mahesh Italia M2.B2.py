@@ -198,7 +198,7 @@ def birth_before_death(table):
     return table
 
 # US15: Fewer Than 15 Siblings
-#Checking whether the family has children less than 15 or more
+# Checking whether the family has children less than 15 or more
 
 
 def fewer_than_15_siblings(arr7):
@@ -277,7 +277,7 @@ def list_living_married(arr3):
     return arr3
 
 # US31: List Living Single
-#listing all the people who are single
+# listing all the people who are single
 
 
 def list_living_single(arr6):
@@ -329,7 +329,7 @@ def list_recent_deaths(arr5):
     return arr5
 
 
-#US01: Dates before today
+# US01: Dates before today
 def dates_before_today(arr):
     valid_dates = True
     mt = []
@@ -394,7 +394,7 @@ def marriage_before_death(arr):
     return arr
 
 # US38: Upcoming Birthdays
-#To get the list of people whose birthday is nearby
+# To get the list of people whose birthday is nearby
 
 
 def upcoming_birthdays(arr9):
@@ -527,20 +527,32 @@ print_individuals()
 print_families()
 user_Stories()
 
+
 class TestStringMethods(unittest.TestCase):
 
     def test_checkUS03(self):
-        self.assertEqual(birth_before_death([]), [['US03', 'Birth Before Death', '', True, 'Birth and death dates are valid.']])
-        
+        self.assertEqual(birth_before_death([]), [
+                         ['US03', 'Birth Before Death', '', True, 'Birth and death dates are valid.']])
+
     def test_checkUS01(self):
-        self.assertEqual(dates_before_today([]), [['US01', 'Dates Before Today', '', True, 'All dates are valid.']])
-    
+        self.assertEqual(dates_before_today(
+            []), [['US01', 'Dates Before Today', '', True, 'All dates are valid.']])
+
     def test_checkUS05(self):
-        self.assertEqual(marriage_before_death([]), [['US05', 'Marriage Before Death', '', True, 'All marriages dates are valid.']])
-    
+        self.assertEqual(marriage_before_death([]), [
+                         ['US05', 'Marriage Before Death', '', True, 'All marriages dates are valid.']])
+
     def test_checkUS28(self):
         self.assertIsNotNone(order_siblings_by_age([]))
-    
+
+    def test_checkUS04(self):
+        self.assertEqual(marriage_before_divorce([]), [
+                         ['US04', 'Marriage Before Divorce', '', True, 'All marriage and divorce dates are valid.']])
+
+    def test_checkUS17(self):
+        self.assertEqual(no_marriage_to_descendants([])[0][3], True)
+
+
 if __name__ == '__main__':
     unittest.main()
 
