@@ -395,8 +395,6 @@ def marriage_before_death(arr):
 
 # US38: Upcoming Birthdays
 # To get the list of people whose birthday is nearby
-
-
 def upcoming_birthdays(arr9):
     birthday_list = []
     for indi in person:
@@ -406,9 +404,31 @@ def upcoming_birthdays(arr9):
             days_to_go = birthdate - datetime.today().date()
             if birthdate > datetime.today().date() and days_to_go < timedelta(days=30):
                 birthday_list.append(indi.name)
-    arr9.append(["US38", "Upcoming Birthdays", "",
-                True, "\n".join(birthday_list)])
+    arr9.append(["US38", "Upcoming Birthdays", "", True, "\n".join(birthday_list)])
+    return birthday_list
 
+# US42: Reject Illegitimate Birthdays
+def checker(date):
+    Feb = 28
+    #feb would be of 29 days in leap years
+    if (date.year % 4) == 0:
+        Feb = 29
+    #array of number of days in every month
+    days_in_month = [31, Feb, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+    return date.day <= days_in_month[date.month - 1]
+
+def reject_illegitimate_birthdays(arr10):  
+    invalid = []
+    date = False
+    for indi in person:
+        if not (indi.birth is None or checker(indi.birth)) or not (indi.death is None or checker(indi.death)):
+            invalid.append("{} has a illegitimate birthday.".format(indi.name))
+            date = True
+    if invalid:
+        arr10.append(["US42", "Reject Illegitimate Birthdays", "", not date, "\n".join(invalid)])
+    else:
+        arr10.append(["US42", "Reject Illegitimate Birthdays", "", not date, "All birthdays are legitimate"])
+    return arr10
 
 def birth_before_marriage(table):  # US02: Birth Before Marriage
     valid_marriage = True
@@ -499,6 +519,7 @@ def user_Stories():
     dates_before_today(table)
     marriage_before_death(table)
     upcoming_birthdays(table)
+    reject_illegitimate_birthdays(table)
     birth_before_marriage(table)
     marriage_before_divorce(table)
     no_marriage_to_descendants(table)
@@ -552,6 +573,11 @@ class TestStringMethods(unittest.TestCase):
     def test_checkUS17(self):
         self.assertEqual(no_marriage_to_descendants([])[0][3], True)
 
+    def test_checkUS38(self):
+        self.assertIsNotNone(upcoming_birthdays([]))
+    
+    def test_checkUS42(self):
+        self.assertEqual(reject_illegitimate_birthdays([]),[['US42', "Reject Illegitimate Birthdays", "", True, "All birthdays are legitimate"]])
 
 if __name__ == '__main__':
     unittest.main()
