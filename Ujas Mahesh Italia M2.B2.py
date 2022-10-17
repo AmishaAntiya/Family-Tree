@@ -527,6 +527,23 @@ print_individuals()
 print_families()
 user_Stories()
 
+class TestStringMethods(unittest.TestCase):
+
+    def test_checkUS03(self):
+        self.assertEqual(birth_before_death([]), [['US03', 'Birth Before Death', '', True, 'Birth and death dates are valid.']])
+        
+    def test_checkUS01(self):
+        self.assertEqual(dates_before_today([]), [['US01', 'Dates Before Today', '', True, 'All dates are valid.']])
+    
+    def test_checkUS05(self):
+        self.assertEqual(marriage_before_death([]), [['US05', 'Marriage Before Death', '', True, 'All marriages dates are valid.']])
+    
+    def test_checkUS28(self):
+        self.assertIsNotNone(order_siblings_by_age([]))
+    
+if __name__ == '__main__':
+    unittest.main()
+
 with open('output.txt', 'w') as f:
     f.write("Output for individual\n")
     f.write(print_individuals()+"\n\n")
