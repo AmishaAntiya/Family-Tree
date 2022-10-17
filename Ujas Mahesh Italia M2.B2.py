@@ -573,6 +573,12 @@ class TestStringMethods(unittest.TestCase):
     def test_checkUS17(self):
         self.assertEqual(no_marriage_to_descendants([])[0][3], True)
 
+    def test_checkUS29(self):
+        self.assertNotEqual(list_deceased([])[0][0],"US30")
+    
+    def test_checkUS30(self):
+        self.assertIsNotNone(list_living_married([]))
+
     def test_checkUS38(self):
         self.assertIsNotNone(upcoming_birthdays([]))
     
