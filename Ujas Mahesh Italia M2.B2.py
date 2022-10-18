@@ -405,7 +405,7 @@ def upcoming_birthdays(arr9):
             if birthdate > datetime.today().date() and days_to_go < timedelta(days=30):
                 birthday_list.append(indi.name)
     arr9.append(["US38", "Upcoming Birthdays", "", True, "\n".join(birthday_list)])
-    return birthday_list
+    return arr9
 
 # US42: Reject Illegitimate Birthdays
 def checker(date):
