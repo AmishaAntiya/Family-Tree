@@ -173,6 +173,11 @@ def get_descendants(i_id):
 
     return descendants
 
+
+def indi_age(indi):
+    return datetime.today().date().year - indi.birth.year - ((datetime.today().date().month, datetime.today().date().day)
+                                                            < (indi.birth.month, indi.birth.day))
+
 # US03: Birth Before Death
 # Comparing birth dates and death dates to check the validity
 
@@ -522,6 +527,73 @@ def siblings_should_not_marry(table):
     else:
         table.append(["US18", "Siblings Should Not Marry Each other", "\n".join(data), not marriage_sibling,"No siblings are married to one another."])
    
+# US10: Marriage After 14
+def marriage_after_fourteen(inp): 
+    valid_marriage = True
+    arr = []
+    for fam in fams:
+        if fam.marriage is None:
+            continue
+        wife = get_individual(fam.wife)
+        hsb = get_individual(fam.husband)
+        wife_age_mrg = (fam.marriage - wife.birth).days / 365
+        hsb_age_mrg = (fam.marriage - hsb.birth).days / 365
+
+        if  hsb_age_mrg < 14 and wife_age_mrg < 14:
+            arr.append("{} and {} got married before the age of 14!".format(wife.name, hsb.name))
+            arr.append("They got married on: {} and {}'s birth date is: {} and {}'s birth date is: {}".format(
+                format_date(fam.marriage),
+                wife.name, format_date(wife.birth), hsb.name, format_date(hsb.birth)))
+            valid_marriage = False
+        elif wife_age_mrg < 14:
+            arr.append("{} got married before the age of 14!".format(wife.name))
+            arr.append(
+                "{} got married on: {} and their birth date is: {}".format(wife.name, format_date(fam.marriage),
+                                                                           format_date(wife.birth)))
+            valid_marriage = False
+        elif hsb_age_mrg < 14:
+            arr.append("{} got married before the age of 14!".format(hsb.name))
+            arr.append(
+                "{} got married on: {} and their birth date is: {}".format(hsb.name, format_date(fam.marriage),
+                                                                           format_date(hsb.birth)))
+            valid_marriage = False
+
+    if valid_marriage:
+        ans = "Everyone got married at the right age."
+    else:
+        ans = "Someone got married too early!"
+    inp.append(
+        ["US10", "Marriage After 14", "\n".join(arr), valid_marriage, ans])
+    return inp
+
+# US12: Parents Not Too Old
+def parents_not_too_old(inp):  
+    old = False
+    arr = []
+    for fam in fams:
+        if fam.children:
+            mom = get_individual(fam.wife)
+            dad = get_individual(fam.husband)
+            for child_id in fam.children:
+                child = get_individual(child_id)
+                if abs(indi_age(mom) - indi_age(child)) >= 60 and abs(indi_age(dad) - indi_age(child)) >= 80:
+                    arr.append("{}'s parents, {} and {}, are too old.".format(child.name, mom.name, dad.name))
+                    old = True
+                elif abs(indi_age(mom) - indi_age(child)) >= 60:
+                    arr.append("{}'s mother, {}, is too old.".format(child.name, mom.name))
+                    old = True
+                elif abs(indi_age(dad) - indi_age(child)) >= 80:
+                    arr.append("{}'s father, {}, is too old.".format(child.name, dad.name))
+                    old = True
+    if old:
+        ans = "Some parents are too old in this file."
+    else:
+        ans = "All parents are not too old in this file."
+    inp.append(
+        ["US12", "Parents Are Not Too Old", "\n".join(arr), not old, ans])
+    return inp
+
+
 def user_Stories():
     headers = ["User Story", "Description", "Error Message", "Pass", "Result"]
     table = []
@@ -541,6 +613,8 @@ def user_Stories():
     marriage_before_divorce(table)
     no_marriage_to_descendants(table)
     siblings_should_not_marry(table)
+    marriage_after_fourteen(table)
+    parents_not_too_old(table)
     print(tabulate(table, headers, tablefmt="fancy_grid"))
     return (tabulate(table, headers))
 
@@ -620,7 +694,13 @@ class TestStringMethods(unittest.TestCase):
     
     def test_checkUS42(self):
         self.assertEqual(reject_illegitimate_birthdays([]),[['US42', "Reject Illegitimate Birthdays", "", True, "All birthdays are legitimate"]])
-
+    
+    def test_checkUS10(self):
+        self.assertEqual(marriage_after_fourteen([])[0][3], False)
+    
+    def test_checkUS12(self):
+        self.assertIsNotNone(parents_not_too_old([]))
+    
 if __name__ == '__main__':
     unittest.main()
 
