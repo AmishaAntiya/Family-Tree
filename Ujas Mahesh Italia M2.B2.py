@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from pandas import NA
 from tabulate import tabulate
 from datetime import date
 import unittest
@@ -159,6 +160,70 @@ def get_family(fam_id):
 
 def get_family_by_id(i_id):
     return [fam.f_id for fam in fams if i_id in [fam.husband, fam.wife]]
+
+
+def print_bigamy(ind, marriage_a, marriage_b, notes):
+    if ind.sex == "M":
+        notes.append("{} committed bigamy with {} and {}".format(ind.name, get_individual(marriage_a.wife).name,
+                                                                 get_individual(marriage_b.wife).name))
+    else:
+        notes.append("{} committed bigamy with {} and {}".format(ind.name, get_individual(marriage_a.husband).name,
+                                                                 get_individual(marriage_b.husband).name))
+
+def check_bigamy_spouse_death(ind, marriage_a, marriage_b, bigamy, notes):
+    if ind.sex == "M":  # check if either wife died
+        if get_individual(marriage_a.wife).death is not None and get_individual(
+                marriage_a.wife).death >= marriage_b.marriage:
+            print_bigamy(ind, marriage_a, marriage_a, notes)
+            bigamy = True
+        elif get_individual(marriage_b.wife).death is not None and get_individual(
+                marriage_b.wife).death >= marriage_a.marriage:
+            print_bigamy(ind, marriage_a, marriage_b, notes)
+            bigamy = True
+    else:  # check if either husband died
+        if get_individual(marriage_a.husband).death is not None and get_individual(
+                marriage_a.husband).death >= marriage_b.marriage:
+            print_bigamy(ind, marriage_a, marriage_b, notes)
+            bigamy = True
+        elif get_individual(marriage_b.husband).death is not None and get_individual(
+                marriage_b.husband).death >= marriage_a.marriage:
+            print_bigamy(ind, marriage_a, marriage_b, notes)
+            bigamy = True
+
+    return bigamy
+
+
+def check_bigamy_divorce_spouse_death(ind, marriage_a, marriage_b, bigamy, notes):
+    if ind.sex == "M":  # check if either wife died
+        if get_individual(marriage_a.wife).death is None:
+            if marriage_b.divorce >= marriage_a.marriage:
+                print_bigamy(ind, marriage_a, marriage_a, notes)
+                bigamy = True
+        else:
+            if marriage_b.divorce >= marriage_a.marriage or get_individual(
+                    marriage_a.wife).death >= marriage_b.marriage:
+                print_bigamy(ind, marriage_a, marriage_b, notes)
+                bigamy = True
+    else:  # check if either husband died
+        if get_individual(marriage_a.husband).death is None:
+            if marriage_b.divorce >= marriage_a.marriage:
+                print_bigamy(ind, marriage_a, marriage_a, notes)
+                bigamy = True
+        else:
+            if marriage_b.divorce >= marriage_a.marriage or get_individual(
+                    marriage_a.husband).death >= marriage_b.marriage:
+                print_bigamy(ind, marriage_a, marriage_b, notes)
+                bigamy = True
+
+    return bigamy
+
+
+def check_bigamy_divorce(ind, marriage_a, marriage_b, bigamy, notes):
+    if marriage_a.marriage > marriage_b.divorce or marriage_b.marriage <= marriage_a.divorce:
+        print_bigamy(ind, marriage_a, marriage_b, notes)
+        bigamy = True
+
+    return bigamy
 
 
 def get_descendants(i_id):
@@ -593,6 +658,89 @@ def parents_not_too_old(inp):
         ["US12", "Parents Are Not Too Old", "\n".join(arr), not old, ans])
     return inp
 
+# US09: Birth Before Death of Parents
+def birth_before_parents_death(table):
+    valid_birth = True
+    notes = []
+    for per in person:
+        if per.child_id is "NA":            
+            continue
+        husband = get_individual(get_husband_id(per))  # get husband
+        wife = get_individual(get_wife_id(per))  # get wife
+
+        if husband.death is None and wife.death is None:  # if husband and wife are alive
+            continue
+        if husband.death is not None and wife.death is not None:  # if husband and wife are both dead
+            if per.birth < husband.death and per.birth < wife.death:
+                continue
+            else:
+                valid_birth = False
+                notes.append(
+                    "{} was born after death of parent(s).".format(per.name))
+        elif husband.death is not None and per.birth < husband.death:  # if husband is dead
+            continue
+        elif wife.death is not None and per.birth < wife.death:  # if wife is dead
+            continue
+        else:
+            valid_birth = False
+            notes.append(
+                "{} was born after death of parent(s).".format(per.name))
+
+    if valid_birth:
+        result = "Birth dates were valid and before parents' deaths."
+    else:
+        result = "Atleast one birth date was invalid."
+
+    table.append(
+        ["US09", "Birth Before Death of Parents", "\n".join(notes), valid_birth, result])
+    return table
+
+
+# US11: No marriage occured before divorcing previous marriage
+def no_bigamy(table):  # US11: No Bigamy
+    bigamy = False
+    notes = []
+    for ind in person:
+        # Find all marriages for an individual
+        marriages = []
+        for fam in fams:
+            if ind.id == fam.husband or ind.id == fam.wife:
+                marriages.append(fam)
+
+        # If they are in less than 2 families, there can be no bigotry
+        if len(marriages) < 2:
+            continue
+
+        for i in range(len(marriages)):
+            for j in range(i + 1, len(marriages)):
+                # Neither family are divorced
+                if marriages[i].divorce is None and marriages[j].divorce is None:
+                    bigamy = check_bigamy_spouse_death(
+                        ind, marriages[i], marriages[j], bigamy, notes)
+                # Was Family A created before Family B divorce/death?
+                elif marriages[i].divorce is None:
+                    bigamy = check_bigamy_divorce_spouse_death(
+                        ind, marriages[i], marriages[j], bigamy, notes)
+                # Was Family B created before Family A divorce/death?
+                elif marriages[j].divorce is None:
+                    bigamy = check_bigamy_divorce_spouse_death(
+                        ind, marriages[j], marriages[i], bigamy, notes)
+                else:  # Both families are divorced
+                    bigamy = check_bigamy_divorce(
+                        ind, marriages[i], marriages[j], bigamy, notes)
+
+    if bigamy:
+        result = "There is atleast one bigamy case in this data."
+    else:
+        result = "No marriage occured before divorcing previous marriage."
+
+    table.append(
+        ["US11", "No Bigamy", "\n".join(notes), not bigamy, result])
+
+    return table
+
+
+
 
 def user_Stories():
     headers = ["User Story", "Description", "Error Message", "Pass", "Result"]
@@ -615,6 +763,9 @@ def user_Stories():
     siblings_should_not_marry(table)
     marriage_after_fourteen(table)
     parents_not_too_old(table)
+    birth_before_parents_death(table)
+    no_bigamy(table)
+    
     print(tabulate(table, headers, tablefmt="fancy_grid"))
     return (tabulate(table, headers))
 
@@ -700,6 +851,14 @@ class TestStringMethods(unittest.TestCase):
     
     def test_checkUS12(self):
         self.assertIsNotNone(parents_not_too_old([]))
+
+    def test_checkUS09(self):
+        self.assertIn("Ridhima Kapoor", birth_before_parents_death([])[0][2])
+
+    def test_checkUS11(self):
+        self.assertTrue(no_bigamy([])[0][3])
+
+    
     
 if __name__ == '__main__':
     unittest.main()

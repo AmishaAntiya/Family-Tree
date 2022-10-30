@@ -13,7 +13,7 @@ I9    Neetu Singh            F      08 Jul 1958     64  True     NA           NA
 I10   Karishma Kapoor        F      25 Jun 1974     48  True     NA           F3          NA
 I11   Kareena Khan           F      21 Sep 1980     42  True     NA           F2          NA
 I12   Nikhil Nanda           M      18 Mar 1974     48  True     NA           F4          NA
-I13   Natasha Nanda          F      09 Nov 1980     41  True     NA           F4          NA
+I13   Natasha Nanda          F      09 Nov 1980     42  True     NA           F4          NA
 I14   Ranbir Kapoor          M      28 Sep 1982     40  True     NA           F5          NA
 I15   Ridhima Kapoor         F      15 Sep 2022      0  True     NA           F5          NA
 
@@ -55,8 +55,7 @@ US35          List Recent Births                                                
 US36          List Recent Deaths                                                                                                  True    No recent death
 US01          Dates Before Today                                                                                                  True    All dates are valid.
 US05          Marriage Before Death                                                                                               True    All marriages dates are valid.
-US38          Upcoming Birthdays                                                                                                  True    Ritu Kapoor
-                                                                                                                                          Natasha Nanda
+US38          Upcoming Birthdays                                                                                                  True    Natasha Nanda
 US42          Reject Illegitimate Birthdays                                                                                       True    All birthdays are legitimate
 US02          Birth Before Marriage                 Rajan Nanda has either an incorrect birth or marriage date.                   False   Atleast one birthdate or marriage date is incorrect.
                                                     Birthdate is: 18 May 1974 and Marriage date is: 09 Jul 1969
@@ -66,3 +65,6 @@ US18          Siblings Should Not Marry Each other                              
 US10          Marriage After 14                     Rajan Nanda got married before the age of 14!                                 False   Someone got married too early!
                                                     Rajan Nanda got married on: 09 Jul 1969 and their birth date is: 18 May 1974
 US12          Parents Are Not Too Old                                                                                             True    All parents are not too old in this file.
+US09          Birth Before Death of Parents         Ridhima Kapoor was born after death of parent(s).                             False   Atleast one birth date was invalid.
+US11          No Bigamy                                                                                                           True    No marriage occured before divorcing previous marriage.
+US07          Less Than 150 Years Old                                                                                             True    Every person is within the right age range.
