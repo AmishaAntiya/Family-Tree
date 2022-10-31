@@ -929,6 +929,12 @@ class TestStringMethods(unittest.TestCase):
     def test_checkUS36(self):
         self.assertNotIn("Rishi Kapoor",list_recent_deaths([])[0])
 
+    def test_checkUS15(self):
+        self.assertIsNotNone(fewer_than_15_siblings([]))
+
+    def test_checkUS31(self): 
+        self.assertIn("Natasha Nanda",list_living_single([])[0][4])
+
     def test_checkUS38(self):
         self.assertIsNotNone(upcoming_birthdays([]))
     
@@ -952,8 +958,10 @@ class TestStringMethods(unittest.TestCase):
 
     def test_checkUS16(self):
         self.assertIsNotNone(male_last_name([]))
+
     def test_checkUS07(self):
         self.assertEqual(less_than_150_years_old([])[0][2], '')
+
     def test_checkUS13(self):
         self.assertTrue(sibling_age_space([])[0][3])
 
