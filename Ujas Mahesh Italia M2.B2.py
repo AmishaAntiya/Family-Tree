@@ -763,7 +763,6 @@ def less_than_150_years_old(table):
         table.append(["US07", "Less Than 150 Years Old", "\n".join(notes), right_age, "One of the person is above 150 years old."])
     return table
 
-<<<<<<< HEAD
 # US06:Divorce before death
 def divorce_before_death (arr12):
     divorce=True
@@ -809,7 +808,6 @@ def male_last_name(arr13):
     arr13.append(["US16","Male last names","\n".join(msg),last_name,note])
     return arr13
 
-=======
 # US13: Siblings spacing
 def sibling_age_space(table):
     sibling_space = True
@@ -828,7 +826,6 @@ def sibling_age_space(table):
     else:
         table.append( ["US13", "Sibling Age Spacing", "\n".join(notes), sibling_space, " One of the siblings have birthday within 8 months"])
     return table
->>>>>>> 070babbcbf1e3ae2b33e7b9bc11d397eb6dcffdf
 
 def user_Stories():
     headers = ["User Story", "Description", "Error Message", "Pass", "Result"]
@@ -853,13 +850,10 @@ def user_Stories():
     parents_not_too_old(table)
     birth_before_parents_death(table)
     no_bigamy(table)
-<<<<<<< HEAD
     divorce_before_death(table)
     male_last_name(table)
-=======
     less_than_150_years_old(table)
     sibling_age_space(table)
->>>>>>> 070babbcbf1e3ae2b33e7b9bc11d397eb6dcffdf
     
     print(tabulate(table, headers, tablefmt="fancy_grid"))
     return (tabulate(table, headers))
@@ -953,20 +947,17 @@ class TestStringMethods(unittest.TestCase):
     def test_checkUS11(self):
         self.assertTrue(no_bigamy([])[0][3])
 
-<<<<<<< HEAD
     def test_checkUS06(self):
         self.assertEqual(divorce_before_death ([]),[["US06","Divorce before death","",True,"All divorce are before death"]])
 
     def test_checkUS16(self):
         self.assertIsNotNone(male_last_name([]))
-=======
     def test_checkUS07(self):
         self.assertEqual(less_than_150_years_old([])[0][2], '')
     def test_checkUS13(self):
         self.assertTrue(sibling_age_space([])[0][3])
 
     
->>>>>>> 070babbcbf1e3ae2b33e7b9bc11d397eb6dcffdf
     
 if __name__ == '__main__':
     unittest.main()
