@@ -525,8 +525,8 @@ def birth_before_marriage(table):  # US02: Birth Before Marriage
             data), valid_marriage, "Atleast one birthdate or marriage date is incorrect."])
     return table
 
-
-def marriage_before_divorce(table):  # US04: Marriage Before Divorce
+  # US04: Marriage Before Divorce
+def marriage_before_divorce(table):
     marry_before_divorce = True
     data1 = []
     for fam in fams:
@@ -663,7 +663,7 @@ def birth_before_parents_death(table):
     valid_birth = True
     notes = []
     for per in person:
-        if per.child_id is "NA":            
+        if per.child_id == "NA":            
             continue
         husband = get_individual(get_husband_id(per))  # get husband
         wife = get_individual(get_wife_id(per))  # get wife
@@ -738,8 +738,32 @@ def no_bigamy(table):  # US11: No Bigamy
         ["US11", "No Bigamy", "\n".join(notes), not bigamy, result])
 
     return table
+# US07:Check whether anyone is more than 150 years old
+def less_than_150_years_old(table): 
+    right_age = True
+    notes = []
+    # Find the difference of everyone and check whether he is below 150
+    for ind in person:
+        #checking whether person is alive
+        if ind.death is None:
+            diff = datetime.now().date() - ind.birth
+            if (diff.days / 365) > 150:
+                notes.append(f"{ind.name} is over 150 years old! and birthdate is {format_date(ind.birth)}.")
+                right_age = False
+        # else calculate the death
+        else:
+            diff = ind.death - ind.birth
+            if (diff.days / 365) > 150:
+                notes.append(f"{ind.name} was over 150 years old and birthday is {format_date(ind.birth)} and death is {format_date(ind.death)}.")
+                right_age = False
 
+    if right_age:
+        table.append(["US07", "Less Than 150 Years Old", "\n".join(notes), right_age, "Every person is below 150 years."])
+    else:
+        table.append(["US07", "Less Than 150 Years Old", "\n".join(notes), right_age, "One of the person is above 150 years old."])
+    return table
 
+<<<<<<< HEAD
 # US06:Divorce before death
 def divorce_before_death (arr12):
     divorce=True
@@ -785,6 +809,26 @@ def male_last_name(arr13):
     arr13.append(["US16","Male last names","\n".join(msg),last_name,note])
     return arr13
 
+=======
+# US13: Siblings spacing
+def sibling_age_space(table):
+    sibling_space = True
+    notes = []
+    # To get all the birthdates of siblings and check whether they are born 8 months apart
+    # If no then sibling spacing will be false and error will be thrown
+    for fam in fams:
+        if fam.children and len(fam.children) > 1:
+            for i in range(len(fam.children)):
+                for j in range(i + 1, len(fam.children)):
+                    if 2 < abs((get_individual(fam.children[i]).birth - get_individual(fam.children[j]).birth).days) < 243.3:
+                        notes.append(f"{get_individual(fam.children[i]).name} and {get_individual(fam.children[j]).name} are not spaced properly.")
+                        sibling_space = False
+    if sibling_space:
+        table.append( ["US13", "Sibling Age Spacing", "\n".join(notes), sibling_space, "All sibling ages have birthdates more than 8 months apart  "])
+    else:
+        table.append( ["US13", "Sibling Age Spacing", "\n".join(notes), sibling_space, " One of the siblings have birthday within 8 months"])
+    return table
+>>>>>>> 070babbcbf1e3ae2b33e7b9bc11d397eb6dcffdf
 
 def user_Stories():
     headers = ["User Story", "Description", "Error Message", "Pass", "Result"]
@@ -809,8 +853,13 @@ def user_Stories():
     parents_not_too_old(table)
     birth_before_parents_death(table)
     no_bigamy(table)
+<<<<<<< HEAD
     divorce_before_death(table)
     male_last_name(table)
+=======
+    less_than_150_years_old(table)
+    sibling_age_space(table)
+>>>>>>> 070babbcbf1e3ae2b33e7b9bc11d397eb6dcffdf
     
     print(tabulate(table, headers, tablefmt="fancy_grid"))
     return (tabulate(table, headers))
@@ -904,11 +953,20 @@ class TestStringMethods(unittest.TestCase):
     def test_checkUS11(self):
         self.assertTrue(no_bigamy([])[0][3])
 
+<<<<<<< HEAD
     def test_checkUS06(self):
         self.assertEqual(divorce_before_death ([]),[["US06","Divorce before death","",True,"All divorce are before death"]])
 
     def test_checkUS16(self):
         self.assertIsNotNone(male_last_name([]))
+=======
+    def test_checkUS07(self):
+        self.assertEqual(less_than_150_years_old([])[0][2], '')
+    def test_checkUS13(self):
+        self.assertTrue(sibling_age_space([])[0][3])
+
+    
+>>>>>>> 070babbcbf1e3ae2b33e7b9bc11d397eb6dcffdf
     
 if __name__ == '__main__':
     unittest.main()
