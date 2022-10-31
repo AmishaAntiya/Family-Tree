@@ -740,6 +740,50 @@ def no_bigamy(table):  # US11: No Bigamy
     return table
 
 
+# US06:Divorce before death
+def divorce_before_death (arr12):
+    divorce=True
+    msg=[]
+    for fam in fams:
+        wife=get_individual(fam.wife).name
+        husband=get_individual(fam.husband).name
+        for indi in person:
+            #check if there is divorce
+            if (fam.divorce is not None):
+                #check if the name matches
+                if (indi.name==wife or indi.name==husband):
+                    #check if the individual is dead
+                    if (indi.death is not None):
+                        #compare the death and divorce death
+                        if (indi.death<fam.divorce):
+                            msg.append("{} is having an incorrect divorce or death date".format(indi.name))
+                            divorce=False
+    if divorce:
+            note="All divorce are before death"
+    else:
+            note="Divorce after death"
+    arr12.append(["US06","Divorce before death","\n".join(msg),divorce,note])
+    return arr12
+
+# US16:Male last names
+def male_last_name(arr13):
+    last_name=True
+    msg=[]
+    for fam in fams:
+        if fam.children:
+            #to get the last name from the father's name
+            name=get_individual(fam.husband).name[get_individual(fam.husband).name.rfind(" "):]
+            for childs in fam.children:
+                #to check if the individual is male and whether he is having last name or not
+                if get_individual(childs).sex=="M" and (name not in get_individual(childs).name):
+                    msg.append("{} don't have last name".format(get_individual(childs).name))
+                    last_name=False
+    if last_name:
+        note="All male having last name"
+    else:
+        note="Few male not having last name"
+    arr13.append(["US16","Male last names","\n".join(msg),last_name,note])
+    return arr13
 
 
 def user_Stories():
@@ -765,6 +809,8 @@ def user_Stories():
     parents_not_too_old(table)
     birth_before_parents_death(table)
     no_bigamy(table)
+    divorce_before_death(table)
+    male_last_name(table)
     
     print(tabulate(table, headers, tablefmt="fancy_grid"))
     return (tabulate(table, headers))
@@ -858,7 +904,11 @@ class TestStringMethods(unittest.TestCase):
     def test_checkUS11(self):
         self.assertTrue(no_bigamy([])[0][3])
 
-    
+    def test_checkUS06(self):
+        self.assertEqual(divorce_before_death ([]),[["US06","Divorce before death","",True,"All divorce are before death"]])
+
+    def test_checkUS16(self):
+        self.assertIsNotNone(male_last_name([]))
     
 if __name__ == '__main__':
     unittest.main()
