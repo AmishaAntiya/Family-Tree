@@ -119,7 +119,7 @@ def print_individuals():
     for ind in person:
         table.append([ind.id, ind.name, ind.sex, format_date(ind.birth), ind.age, True if ind.death is None else False,
                       format_date(ind.death) if ind.death is not None else "NA", ind.child_id, ind.spouse_id])
-    print(tabulate(table, headers, tablefmt="fancy_grid"))
+    # print(tabulate(table, headers, tablefmt="fancy_grid"))
     return (tabulate(table, headers))
 
 
@@ -134,8 +134,8 @@ def print_families():
                       get_individual(fam.husband).name, fam.wife.replace(
                           '@', ''), get_individual(fam.wife).name,
                       ", ".join(fam.children).replace('@', '')])
-    print(tabulate(table, headers, tablefmt="fancy_grid"))
-    return (tabulate(table, headers))
+    # print(tabulate(table, headers, tablefmt="fancy_grid"))
+    return (tabulate(table, headers, tablefmt="fancy_grid"))
 
 
 def format_date(input_date):
@@ -153,6 +153,10 @@ def get_wife_id(ind):
 def get_individual(ind_id):
     return person[int(ind_id[2]) - 1]
 
+def get_newindi(ind_id):
+    id = ind_id.replace('@','')
+    id = id.replace('I','')
+    return person[int(id)-1]
 
 def get_family(fam_id):
     return fams[int(fam_id[1:]) - 1]
@@ -827,6 +831,33 @@ def sibling_age_space(table):
         table.append( ["US13", "Sibling Age Spacing", "\n".join(notes), sibling_space, " One of the siblings have birthday within 8 months"])
     return table
 
+#US25: Unique first names
+def unique_first_names(inp): 
+    valid_child = True
+    arr = []
+
+    for fam in fams:
+        check = []
+        if len(fam.children) == 0:
+            continue
+        else:
+            for j in fam.children:
+                name = get_newindi(j).name
+                fname = name.split()[0]
+                if fname not in check:
+                    check.append(fname)
+                else: 
+                    valid_child = False
+                    arr.append("There are two individuals with same name{}".format(fname))
+
+    if valid_child:
+        ans = "Everyone has unique names."
+    else:
+        ans = "Someone has same names!"
+    inp.append(
+        ["US25", "Unique first names", "\n".join(arr), valid_child, ans])
+    return inp
+
 def user_Stories():
     headers = ["User Story", "Description", "Error Message", "Pass", "Result"]
     table = []
@@ -854,9 +885,9 @@ def user_Stories():
     male_last_name(table)
     less_than_150_years_old(table)
     sibling_age_space(table)
-    
-    print(tabulate(table, headers, tablefmt="fancy_grid"))
-    return (tabulate(table, headers))
+    unique_first_names(table)
+    # print(tabulate(table, headers, tablefmt="fancy_grid"))
+    return (tabulate(table, headers, tablefmt="fancy_grid"))
 
 
 i = 0
@@ -878,7 +909,7 @@ fams.sort(key=lambda z: int(z.f_id[1:]))
 
 print_individuals()
 print_families()
-user_Stories()
+print(user_Stories())
 
 with open('output.txt', 'w') as f:
     f.write("Output for individual\n")
@@ -964,6 +995,9 @@ class TestStringMethods(unittest.TestCase):
 
     def test_checkUS13(self):
         self.assertTrue(sibling_age_space([])[0][3])
+    
+    def test_checkUS25(self):
+        self.assertEqual(unique_first_names([])[0][4], 'Everyone has unique names.')
 
     
     
