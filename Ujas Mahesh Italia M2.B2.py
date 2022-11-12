@@ -837,25 +837,51 @@ def unique_first_names(inp):
     arr = []
 
     for fam in fams:
-        check = []
+        dict = {}
         if len(fam.children) == 0:
             continue
         else:
             for j in fam.children:
                 name = get_newindi(j).name
                 fname = name.split()[0]
-                if fname not in check:
-                    check.append(fname)
+                bday = get_newindi(j).birth
+                if (fname, bday) not in dict.items():
+                    dict[fname] = bday
                 else: 
                     valid_child = False
-                    arr.append("There are two individuals with same name{}".format(fname))
+                    arr.append("There are two individuals with same name {} and birthdate {}".format(fname, bday))
 
     if valid_child:
-        ans = "Everyone has unique names."
+        ans = "Everyone has unique names with respective birthdates."
     else:
-        ans = "Someone has same names!"
+        ans = "Someone has same names and birthdates!"
     inp.append(
         ["US25", "Unique first names", "\n".join(arr), valid_child, ans])
+    return inp
+
+#US08: Birth before marriage
+def birth_before_marriage_of_parents(inp): 
+    valid_child = True
+    arr = []
+
+    for fam in fams:
+        if fam.marriage is None or fam.children is None:
+            continue
+        else:
+            for j in fam.children:
+                name = get_newindi(j).name
+                birthdate = get_newindi(j).birth
+                if birthdate < fam.marriage:
+                    valid_child = False
+                    arr.append("{} was born before the marriage of his/her parents".format(name))
+                else: 
+                    continue
+    if valid_child:
+        ans = "Every child was born after marriage of their parents."
+    else:
+        ans = "Someone was born before marriage of his/her parents!"
+    inp.append(
+        ["US08", "Birth before marriage of parents", "\n".join(arr), valid_child, ans])
     return inp
 
 def user_Stories():
@@ -886,6 +912,8 @@ def user_Stories():
     less_than_150_years_old(table)
     sibling_age_space(table)
     unique_first_names(table)
+    birth_before_marriage_of_parents(table)
+
     # print(tabulate(table, headers, tablefmt="fancy_grid"))
     return (tabulate(table, headers, tablefmt="fancy_grid"))
 
@@ -997,7 +1025,10 @@ class TestStringMethods(unittest.TestCase):
         self.assertTrue(sibling_age_space([])[0][3])
     
     def test_checkUS25(self):
-        self.assertEqual(unique_first_names([])[0][4], 'Everyone has unique names.')
+        self.assertEqual(unique_first_names([])[0][4], 'Everyone has unique names with respective birthdates.')
+
+    def test_checkUS08(self):
+        self.assertTrue(birth_before_marriage_of_parents([])[0][3])
 
     
     
