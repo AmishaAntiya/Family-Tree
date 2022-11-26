@@ -120,7 +120,7 @@ def print_individuals():
         table.append([ind.id, ind.name, ind.sex, format_date(ind.birth), ind.age, True if ind.death is None else False,
                       format_date(ind.death) if ind.death is not None else "NA", ind.child_id, ind.spouse_id])
     # print(tabulate(table, headers, tablefmt="fancy_grid"))
-    return (tabulate(table, headers))
+    return (tabulate(table, headers,tablefmt="fancy_grid"))
 
 
 def print_families():
@@ -884,6 +884,49 @@ def birth_before_marriage_of_parents(inp):
         ["US08", "Birth before marriage of parents", "\n".join(arr), valid_child, ans])
     return inp
 
+#US39: List upcoming anniversaries
+
+def list_upcoming_anniversaries(table):
+    anniversary_list=[]
+    todays_date = datetime.today().date()
+
+    for fam in fams:
+        if fam.marriage is not None:
+            annidate=datetime(datetime.now().year,fam.marriage.month,fam.marriage.day).date()
+            # print(annidate)
+            days_to_go = annidate - todays_date
+            if annidate > todays_date and days_to_go < timedelta(days=30):
+                anniversary_list.append([get_individual(fam.husband).name,get_individual(fam.wife).name])
+    table.append(["US39", "Upcoming Anniversary", "", True, anniversary_list])
+    return table
+
+from collections import Counter
+def multiple_births_less_5(table):
+    valid_child = True
+    arr = []
+    for fam in fams:
+        dict = {}
+        if fam.children is None:
+            continue
+        else:
+            for j in fam.children:
+                name = get_newindi(j).name
+                birthdate = get_newindi(j).birth
+                dict[name] = birthdate
+        res = Counter(dict.values())
+
+
+        for i in res:
+            if res[i] > 5:
+                valid_child = False
+            else:
+                continue
+    if valid_child:
+        table.append(["US14", "Multiple births <= 5", "\n".join(arr), valid_child, "All the siblings have valid birthdates"])
+    else:
+        table.append(["US14", "Multiple births <= 5", "\n".join(arr), valid_child, "There are atleast 6 siblings with same birthdates"])
+    return table  
+
 def user_Stories():
     headers = ["User Story", "Description", "Error Message", "Pass", "Result"]
     table = []
@@ -913,6 +956,8 @@ def user_Stories():
     sibling_age_space(table)
     unique_first_names(table)
     birth_before_marriage_of_parents(table)
+    list_upcoming_anniversaries(table)
+    multiple_births_less_5(table)
 
     # print(tabulate(table, headers, tablefmt="fancy_grid"))
     return (tabulate(table, headers, tablefmt="fancy_grid"))
@@ -935,17 +980,17 @@ while len(copy) > i:
 person.sort(key=lambda y: int(y.id[1:]))
 fams.sort(key=lambda z: int(z.f_id[1:]))
 
-print_individuals()
-print_families()
+print(print_individuals())
+print(print_families())
 print(user_Stories())
 
-with open('output.txt', 'w') as f:
-    f.write("Output for individual\n")
-    f.write(print_individuals()+"\n\n")
-    f.write("Output for families\n")
-    f.write(print_families()+"\n\n")
-    f.write("Output for user stories\n")
-    f.write(user_Stories())
+# with open('output.txt', 'w') as f:
+#     f.write("Output for individual\n")
+#     f.write(print_individuals()+"\n")
+#     f.write("Output for families\n")
+#     f.write(print_families()+"\n")
+#     f.write("Output for user stories\n")
+#     f.write(user_Stories())
 
 class TestStringMethods(unittest.TestCase):
 
@@ -1029,6 +1074,11 @@ class TestStringMethods(unittest.TestCase):
 
     def test_checkUS08(self):
         self.assertTrue(birth_before_marriage_of_parents([])[0][3])
+    def test_checkUS39(self):
+        self.assertEqual(list_upcoming_anniversaries([])[0][4][0],['Randhir Kapoor','Seema Khan'])
+    def test_checkUS14(self):
+        self.assertIsNotNone(multiple_births_less_5([]))
+
 
     
     
