@@ -899,6 +899,7 @@ def list_upcoming_anniversaries(table):
                 anniversary_list.append([get_individual(fam.husband).name,get_individual(fam.wife).name])
     table.append(["US39", "Upcoming Anniversary", "", True, anniversary_list])
     return table
+#US14: Multiple births <= 5
 
 from collections import Counter
 def multiple_births_less_5(table):
