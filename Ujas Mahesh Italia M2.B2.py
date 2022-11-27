@@ -120,7 +120,7 @@ def print_individuals():
         table.append([ind.id, ind.name, ind.sex, format_date(ind.birth), ind.age, True if ind.death is None else False,
                       format_date(ind.death) if ind.death is not None else "NA", ind.child_id, ind.spouse_id])
     # print(tabulate(table, headers, tablefmt="fancy_grid"))
-    return (tabulate(table, headers,tablefmt="fancy_grid"))
+    return (tabulate(table, headers, tablefmt="fancy_grid"))
 
 
 def print_families():
@@ -926,7 +926,62 @@ def multiple_births_less_5(table):
         table.append(["US14", "Multiple births <= 5", "\n".join(arr), valid_child, "All the siblings have valid birthdates"])
     else:
         table.append(["US14", "Multiple births <= 5", "\n".join(arr), valid_child, "There are atleast 6 siblings with same birthdates"])
-    return table  
+    return table
+
+# US 27 print person ages
+
+
+def include_individual_ages(arr2):
+    arr1 = []
+    for per in person:
+        if per.death is not None:
+            # print(per.name, per.birth, per.death)
+            birthDate = per.birth
+            today = per.death
+            age = today.year - birthDate.year - \
+                ((today.month, today.day) < (birthDate.month, birthDate.day))
+            arr1.append(per.name + " is " + str(age) + " years old")
+        else:
+            birthDate = per.birth
+            today = date.today()
+            age = today.year - birthDate.year - \
+                ((today.month, today.day) < (birthDate.month, birthDate.day))
+            if age == 0:
+                age = today.month - birthDate.month
+                arr1.append(per.name + "is " + str(age) + " months old")
+                continue
+            arr1.append(per.name + "is " + str(age) + " year old")
+
+    arr1 = '\n'.join([str(i) for i in arr1])
+    arr2.append(['US27', 'Individual Ages',
+                 '', True, '\n{}\n'.format(arr1)])
+    return arr2
+
+
+# Us33 List orphans
+def list_orphans(arr2):
+    arr = []
+    for fam in fams:
+        # dict = {}
+        if fam.children is None:
+            continue
+        else:
+            for j in fam.children:
+                child = get_newindi(j).name
+                father = get_newindi(fam.husband)
+                mother = get_newindi(fam.wife)
+                if (father.death and mother.death):
+                    arr.append(child)
+
+    if arr:
+        arr = '\n'.join([str(i) for i in arr])
+        arr2.append(['US33', 'List Orphans',
+                    '', True, '\n{}\n'.format(arr)])
+        return arr2
+    else:
+        arr2.append(['US33', 'List Orphans',
+                    'No Orphans Found', False, ''])
+        return arr2
 
 def user_Stories():
     headers = ["User Story", "Description", "Error Message", "Pass", "Result"]
@@ -959,6 +1014,8 @@ def user_Stories():
     birth_before_marriage_of_parents(table)
     list_upcoming_anniversaries(table)
     multiple_births_less_5(table)
+    include_individual_ages(table)
+    list_orphans(table)
 
     # print(tabulate(table, headers, tablefmt="fancy_grid"))
     return (tabulate(table, headers, tablefmt="fancy_grid"))
@@ -985,13 +1042,13 @@ print(print_individuals())
 print(print_families())
 print(user_Stories())
 
-# with open('output.txt', 'w') as f:
-#     f.write("Output for individual\n")
-#     f.write(print_individuals()+"\n")
-#     f.write("Output for families\n")
-#     f.write(print_families()+"\n")
-#     f.write("Output for user stories\n")
-#     f.write(user_Stories())
+with open('output.txt', 'w', encoding='utf-8') as f:
+    f.write("Output for individual\n")
+    f.write(print_individuals()+"\n\n")
+    f.write("Output for families\n")
+    f.write(print_families()+"\n\n")
+    f.write("Output for user stories\n")
+    f.write(user_Stories())
 
 class TestStringMethods(unittest.TestCase):
 
@@ -1079,6 +1136,12 @@ class TestStringMethods(unittest.TestCase):
         self.assertEqual(list_upcoming_anniversaries([])[0][4][0],['Randhir Kapoor','Seema Khan'])
     def test_checkUS14(self):
         self.assertIsNotNone(multiple_births_less_5([]))
+
+    def test_checkUS27(self):
+        self.assertIsNotNone(include_individual_ages([])[0][4])
+
+    def test_checkUS33(self):
+        self.assertTrue(list_orphans([])[0][3])
 
 
     
