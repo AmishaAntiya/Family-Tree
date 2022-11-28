@@ -983,6 +983,58 @@ def list_orphans(arr2):
                     'No Orphans Found', False, ''])
         return arr2
 
+
+# US21: Correct gender for role
+def correct_gender_for_role(arr21):
+    arr=[]
+    valid_gender= True
+    for fam in fams:
+        #get the gender of husband and wife to check if it's correct or not
+        husband_gender=get_newindi(fam.husband).sex
+        husband_name=get_newindi(fam.husband).name
+        wife_gender=get_newindi(fam.wife).sex
+        wife_name=get_newindi(fam.wife).name
+        #check the gender
+        if(husband_gender != "M"):
+            valid_gender= False
+            arr.append("Role of {} is having the incorrect gender {}".format(husband_name,husband_gender))
+        if(wife_gender != "F"):
+            valid_gender= False
+            arr.append("Role of {} is having the incorrect gender {}".format(wife_name,wife_gender))
+        else:
+            continue
+    if valid_gender:
+        msg = "Every role is having correct gender"
+    else:
+        msg = "Someone has incorrect gender"
+    arr21.append(["US21", "Correct gender for role", "\n".join(arr), valid_gender, msg])
+    return arr21
+
+# US23: Unique name and birth date
+def unique_name_and_birthdate(arr23):
+    valid_indi = True
+    arr = []
+    dict = {}
+    for indi in person:
+        #get the name and birth date of individual
+        fname=indi.name
+        birth=indi.birth
+        #insert the name and birth date in dictionary if not present 
+        if (fname, birth) not in dict.items():
+                    dict[fname] =birth
+        #if name and birthdate already exist in dictionary then two ppl having same name and birthdate
+        else: 
+            valid_indi = False
+            arr.append("There are two individuals with same name {} and birthdate {}".format(fname, birth))
+    if valid_indi:
+        msg = "Everyone has unique names with respective birthdates."
+    else:
+        msg = "Someone has same names and birthdates!"
+    arr23.append(
+        ["US23", "Unique name and birth date", "\n".join(arr), valid_indi, msg])
+    return arr23
+
+
 def user_Stories():
     headers = ["User Story", "Description", "Error Message", "Pass", "Result"]
     table = []
@@ -1016,6 +1068,8 @@ def user_Stories():
     multiple_births_less_5(table)
     include_individual_ages(table)
     list_orphans(table)
+    correct_gender_for_role(table)
+    unique_name_and_birthdate(table)
 
     # print(tabulate(table, headers, tablefmt="fancy_grid"))
     return (tabulate(table, headers, tablefmt="fancy_grid"))
@@ -1143,7 +1197,11 @@ class TestStringMethods(unittest.TestCase):
     def test_checkUS33(self):
         self.assertTrue(list_orphans([])[0][3])
 
+    def test_checkUS23(self):
+        self.assertTrue(unique_name_and_birthdate([])[0][3])
 
+    def test_checkUS21(self):
+        self.assertEqual(correct_gender_for_role([])[0][4],"Every role is having correct gender")
     
     
 if __name__ == '__main__':
